@@ -24,31 +24,20 @@ def func(path, functionality, word):
             print("The X is : " + eachLine)
             # counts occurence in paragraph
             # doesn't count multiple oddurences
-            if word in eachLine:
-                # count substring occurence
-                timesPresent += eachLine.count(word)
-                nOfLines += 1
-                print(timesPresent)
+            nOfLines, timesPresent = incrementCounts(eachLine, nOfLines, timesPresent, word)
         print(timesPresent)
         print(nOfLines)
         f.close()
     elif functionality == "write":
-        # fdsaf print("Writing")
         nOfInputWord = 0
         nOfInputSentences = -1
         nOfSentWordOccured = 0
-        eachWord = ""
         while sentence != "Exit":
             sentence = raw_input(
                 "Please kindly enter the message you would like to write to a file. Use quatation marks. \nPlease press Exit to exit and count")
-            print(sentence)
             nOfInputSentences += 1
-            if eachWord in sentence:
-                # count substring occurence
-                if (word in sentence):
-                    nOfInputWord += sentence.count(eachWord)
-                    nOfSentWordOccured += 1
-            elif sentence == "Exit":
+            nOfInputWord, nOfSentWordOccured = incrementCounts(sentence, nOfSentWordOccured, nOfInputWord, word)
+            if sentence == "Exit":
                 break
             elif input is ValueError:
                 continue
@@ -59,6 +48,15 @@ def func(path, functionality, word):
         # throw invalid parameter EnvironmentError
         print("functionality is " + functionality)
         raise ValueError("The functionlality must be ")
+
+
+def incrementCounts(eachLine, nOfLines, timesPresent, word):
+    if word in eachLine:
+        # count substring occurence
+        timesPresent += eachLine.count(word)
+        nOfLines += 1
+        print(timesPresent)
+    return nOfLines, timesPresent
 
 
 func("/Users/student/Dropbox/assignment-8.txt", "write", "imperdiet")
