@@ -20,13 +20,13 @@ def func(path, functionality, word):
         inputString = f.readlines()
         timesPresent = 0
         # counts each paragraph as a line
-        for x in inputString:
-            print("The X is : " + x)
+        for eachLine in inputString:
+            print("The X is : " + eachLine)
             # counts occurence in paragraph
             # doesn't count multiple oddurences
-            if word in x:
+            if word in eachLine:
                 # count substring occurence
-                timesPresent += x.count(word)
+                timesPresent += eachLine.count(word)
                 nOfLines += 1
                 print(timesPresent)
         print(timesPresent)
@@ -35,18 +35,18 @@ def func(path, functionality, word):
     elif functionality == "write":
         # fdsaf print("Writing")
         nOfInputWord = 0
-        nOfInputSentences = 0
+        nOfInputSentences = -1
         nOfSentWordOccured = 0
-        x = ""
+        eachWord = ""
         while sentence != "Exit":
             sentence = raw_input(
-                "Please kindly enter the message you would like to write to a file. Use quatation marks. \nPlease press Exit to exit")
+                "Please kindly enter the message you would like to write to a file. Use quatation marks. \nPlease press Exit to exit and count")
             print(sentence)
             nOfInputSentences += 1
-            if x in sentence:
+            if eachWord in sentence:
                 # count substring occurence
                 if (word in sentence):
-                    nOfInputWord += sentence.count(x)
+                    nOfInputWord += sentence.count(eachWord)
                     nOfSentWordOccured += 1
             elif sentence == "Exit":
                 break
