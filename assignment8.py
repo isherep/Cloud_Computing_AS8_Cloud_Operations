@@ -9,21 +9,23 @@ logging.error('This is an error message')
 logging.critical('This is a critical message')
 '''
 
+
 def func(path, functionality, word):
     f = open(path)
+    sentence = ""
     if functionality == "read":
         print("Reading")
         nOfLines = 0
         # returns a list of lines in the file
         inputString = f.readlines()
         timesPresent = 0
-        #counts each paragraph as a line
+        # counts each paragraph as a line
         for x in inputString:
             print("The X is : " + x)
-            #counts occurence in paragraph
-            #doesn't count multiple oddurences
+            # counts occurence in paragraph
+            # doesn't count multiple oddurences
             if word in x:
-                #count substring occurence
+                # count substring occurence
                 timesPresent += x.count(word)
                 nOfLines += 1
                 print(timesPresent)
@@ -31,23 +33,32 @@ def func(path, functionality, word):
         print(nOfLines)
         f.close()
     elif functionality == "write":
-       #fdsaf print("Writing")
+        # fdsaf print("Writing")
         nOfInputWord = 0
         nOfInputSentences = 0
         nOfSentWordOccured = 0
-        sentence = ""
-        while sentence is not "Exit":
-            sentence = input(
-                "Please kindly enter the message you would like to write to a file: " "/n Please press Exit to exit")
+        x = ""
+        while sentence != "Exit":
+            sentence = raw_input(
+                "Please kindly enter the message you would like to write to a file. Use quatation marks. \nPlease press Exit to exit")
+            print(sentence)
             nOfInputSentences += 1
-            if word in sentence:
-                #count substring occurence
-                nOfInputWord += sentence.count(word)
-                nOfSentWordOccured +=1
-        #file.writelines(f, sentence);
+            if x in sentence:
+                # count substring occurence
+                if (word in sentence):
+                    nOfInputWord += sentence.count(x)
+                    nOfSentWordOccured += 1
+            elif sentence == "Exit":
+                break
+            elif input is ValueError:
+                continue
+        print("The user entered ", nOfInputSentences, "sentences")
+        print("the word 'imperdiet appear ", nOfSentWordOccured, " times.")
+        print("Word ", word, "appeared in ", nOfSentWordOccured, "sentences.")
     else:
         # throw invalid parameter EnvironmentError
         print("functionality is " + functionality)
         raise ValueError("The functionlality must be ")
+
 
 func("/Users/student/Dropbox/assignment-8.txt", "write", "imperdiet")
