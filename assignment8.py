@@ -2,29 +2,20 @@ import logging
 import time
 
 '''
-debug(msg, *args, **kwargs)
-There are four keyword arguments in kwargs which are inspected: exc_info, stack_info, stacklevel and extra.
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-# If some execution time takes too long - throw the warning log?
-
-# if somehow trace level was not created - log critical?
-# if logger is null - error, critical?
-
-DEBUG/TRACE messages can be logged in every function or method call in the application code and
-provide detailed information about the inputs and outputs from the method.
+This application requires user to specify the read or write mode in the parameter when calling myConsoleApp function
+The available parameters are "read" or "write".
 '''
 
 TRACE_LEVEL = 5
 logFormat = '%(asctime)s - %(levelname)s - %(message)s'
-
+nameOfInput = ""
 
 # creating custom trace level of logging
 def trace(self, message, *args, **kws):
     if self.isEnabledFor(TRACE_LEVEL):
         # Yes, logger takes its '*args' as 'args'.
         self._log(TRACE_LEVEL, message, args, **kws)
-
-
+#adding custom trace level to the logging
 logging.addLevelName(TRACE_LEVEL, "TRACE")
 # add trace level to a logger
 logging.Logger.trace = trace
@@ -33,7 +24,7 @@ logging.Logger.trace = trace
 ch = logging.FileHandler("countoccurences.log", "write")
 ch.setLevel(logging.DEBUG)
 # set the format, min level as tracing, file and filemode
-logging.basicConfig(format=logFormat, level=5, filename="countoccurences.log", filemode="w")
+logging.basicConfig(format=logFormat, level = 5, filename = "countoccurences.log", filemode = "w")
 log = logging.getLogger("my-logger")
 
 # check if log object succesfully created
@@ -47,8 +38,8 @@ else:
              "If logging at trace level is present, but no trace attribute created - the application will crash")
     print("Trace attribute was not created. Create the custom level trace before logging trace levels")
 
-
-def func(path, functionality, word):
+# parameters - a file path, a read/write mode, and a word to be searched
+def myConsoleApp(path, functionality, word):
     if len(path) is 0:
         log.error("No file path provided, cannot have empty path")
     if functionality is "" or word is "":
@@ -76,6 +67,7 @@ def func(path, functionality, word):
         inputString = f.readlines()
         end = time.time()
 
+
         print("Time to read all lines from the file: " + "%.6f" % (end - start) + ' seconds')
         if inputString is None:
             log.warn("The output of reading a file is null.")
@@ -91,12 +83,12 @@ def func(path, functionality, word):
             nOfLines, timesPresent, timeToFindWord = incrementCounts(eachLine, nOfLines, timesPresent, word)
 
         log.debug("Counting lines and specified words completed")
-        printWordCountMetrics(timesPresent, nOfLines, word)
+        printWordCountMetrics(timesPresent, nOfLines, word, functionality)
         f.close()
         log.debug("File closed")
 
     elif functionality == "write":
-
+        nameOfInput = "sentences"
         # writing to the same file in the append mode, adding new sentences to the end
         log.info("User chosed " + functionality)
         nOfInputWord = 0
@@ -136,21 +128,24 @@ def func(path, functionality, word):
         except IOError as e:
             log.error("File not open for writing.")
 
-        # calculate everage time for all iterations
-        evarageTimeToWriteLines = everage(nOfInputSentences, totalTimeToWriteLines)
-        everageTime = everage(nOfInputSentences, totalTimeToFindWordInAllLines)
-
-        printPerfomanceMetrics(evarageTimeToWriteLines, everageTime)
+        # calculate everage time for all iterations, only if the divisor is not 0
+        if nOfInputSentences != 0:
+            log.trace("The total number of sentences entered was " + str(nOfInputSentences))
+            evarageTimeToWriteLines = everage(nOfInputSentences, totalTimeToWriteLines)
+            everageTime = everage(nOfInputSentences, totalTimeToFindWordInAllLines)
+            printPerfomanceMetrics(evarageTimeToWriteLines, everageTime)
 
         log.info("User finished entering input, printing the results.")
         log.debug("Finished input loop, printing the results.")
         print("The user entered " + str(nOfInputSentences) + " sentences")
-        printWordCountMetrics(nOfInputWord, nOfSentWordOccured, word)
+        printWordCountMetrics(nOfInputWord, nOfSentWordOccured, word, functionality)
     else:
-        # throw invalid parameter EnvironmentError
+        # throw invalid parameter Error
         log.error("User entered not existant choice of action with the file instead of read/write: " + functionality)
         log.error("Choice entered : " + functionality + "does not exist")
         raise ValueError("The functionality must be read or write only")
+
+
 
 
 # ----------------HELPER FUNCTIONS------------------------
@@ -160,14 +155,16 @@ def everage(nOfInputSentences, totalTimeToWriteLines):
 
 
 def printPerfomanceMetrics(evarageTimeToWriteLines, everageTime):
-    print "\nEverage time to find a word in the sentence " + "%.6f" % (everageTime) + "seconds."
-    print "Everage time to write a sentence to a file is " + "%.6f" % (evarageTimeToWriteLines) + "seconds."
+    print "\nEverage time to find a word in the sentence " + "%.6f" % (everageTime) + " seconds."
+    print "Everage time to write a sentence to a file is " + "%.6f" % (evarageTimeToWriteLines) + " seconds."
 
-
-def printWordCountMetrics(nOfInputWord, nOfSentWordOccured, word):
-    print("the word 'imperdiet appear " + str(nOfInputWord) + " time(s).")
-    print("Word " + word + " appeared in " + str(nOfSentWordOccured) + " sentence(s).")
-
+def printWordCountMetrics(nOfInputWord, nOfSentWordOccured, word, functionality):
+    if functionality == "read":
+        nameOfInput = " line(s) "
+    else:
+        nameOfInput = " sentence(s) "
+    print("The word '" + word + "' appear " + str(nOfInputWord) + " time(s).")
+    print("Word " + word + " appeared in " + str(nOfSentWordOccured) + nameOfInput)
 
 def incrementCounts(eachLine, nOfLines, timesPresent, word):
     start = time.time()
@@ -184,6 +181,8 @@ def incrementCounts(eachLine, nOfLines, timesPresent, word):
     timeToFindWord = end - start
     return nOfLines, timesPresent, timeToFindWord
 
-
 # ----------------TESTING------------------------
-func("/Users/student/Dropbox/assignment-8.txt", "read", "imperdiet")
+myConsoleApp("/Users/student/Dropbox/assignment-8.txt", "read", "imperdiet")
+
+
+#Cookie
